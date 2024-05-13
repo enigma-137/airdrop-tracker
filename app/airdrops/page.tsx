@@ -1,6 +1,6 @@
 
 "use client"
-import { Button } from '@radix-ui/themes'
+import { Box, Button, Card, Text } from '@radix-ui/themes'
 import Link from 'next/link'
 import React from 'react'
 
@@ -53,35 +53,44 @@ const AirdropTable = () => {
 
   return (
 
-    <div className='py-5'>
-     <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse border border-gray-500">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border border-gray-500 px-4 py-2">Title</th>
-            <th className="border border-gray-500 px-4 py-2">Description</th>
-            <th className="border border-gray-500 px-4 py-2">Status</th>
-            <th className="border border-gray-500 px-4 py-2">Date of Creation</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div >
+      <div className='flex flex-col justify-evenly'>
+{/* search */}
+      </div>
+     <div  className='grid grid-cols-4 gap-4'>
+
           {airdrops.map((airdrop) => (
-            <tr key={airdrop.id} className="hover:bg-gray-100">
+                <div>
+ <Box maxWidth="350px" >
+                 <Card asChild>
+                   <a href="#">
+                     <Text as="div" size="2" weight="bold">
+                       {airdrop.title}
+                     </Text>
+                     
+                     <Text as="div" color="gray" size="2">
+                      {airdrop.description}
+                     </Text>
+                   </a>
+                 </Card>
+               </Box>
+                </div>
+          ))}
+      {/* 
+      
+      <tr key={airdrop.id} className="hover:bg-gray-100">
               <td className="border border-gray-500 px-4 py-2">{airdrop.title}</td>
               <td className="border border-gray-500 px-4 py-2">{airdrop.description}</td>
               <td className="border border-gray-500 px-4 py-2">{airdrop.status}</td>
               <td className="border border-gray-500 px-4 py-2">{new Date(airdrop.createdAt).toLocaleDateString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            </tr>*/}
     </div>
-    <div className='pt-4'>
+ 
+    {/* <div className='pt-4'>
     <Button className='mt-4'>
          <Link href="/airdrops/new">New Airdrop</Link>
      </Button>
-    </div>
-  
+    </div> */}
     </div>
     
 
