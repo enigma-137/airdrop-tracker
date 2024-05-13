@@ -68,24 +68,24 @@ const AirdropTable = () => {
       <div className='flex justify-between'>
         {/* Search input */}
         <div className='flex justify-start'>
-          <div className="relative pb-3">
-            <input
-              type="text"
-              value={searchText}
-              onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search for drops…"
-              className="py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <FaMagnifyingGlass className="text-gray-500" />
-            </div>
-          </div>
+
+          <TextField.Root
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="Search for drops…"
+            className="py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
+
+          >
+            <TextField.Slot>
+              <FaMagnifyingGlass height="16" width="16" />
+            </TextField.Slot>
+          </TextField.Root>
         </div>
 
         {/* Button */}
         <div className='pb-3 flex justify-end'>
           <Button className='mt-4 flex justify-between'>
-            <Link href="/airdrops/new"> <CiCirclePlus />New Airdrop</Link>
+            <Link href="/airdrops/new" className='flex gap-x-2 items-center' > <CiCirclePlus className='font-bold size-6'/> <span>New Airdrop</span></Link>
           </Button>
         </div>
       </div>
