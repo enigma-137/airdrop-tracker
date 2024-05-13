@@ -1,9 +1,9 @@
 
 "use client"
-import { Box, Button, Card, Text } from '@radix-ui/themes'
+import { Box, Button, Card, Select, Text, TextField } from '@radix-ui/themes'
 import Link from 'next/link'
-import React from 'react'
-
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { CiCirclePlus } from "react-icons/ci";
 
 // Edit Airdrop
 // Toggle Status
@@ -27,12 +27,15 @@ const AirdropTable = () => {
   const [airdrops, setAirdrops] = useState<Airdrop[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [filteredAirdrops, setFilteredAirdrops] = useState<Airdrop[]>([]);
 
   useEffect(() => {
     const fetchAirdrops = async () => {
       try {
         const response = await axios.get('/api/airdrops/list');
         setAirdrops(response.data);
+        setFilteredAirdrops(response.data);
         setLoading(false);
       } catch (error) {
         setError("Error fetching airdrops");
@@ -43,6 +46,15 @@ const AirdropTable = () => {
     fetchAirdrops();
   }, []);
 
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    const filtered = airdrops.filter(airdrop =>
+      airdrop.title.toLowerCase().includes(text.toLowerCase()) ||
+      airdrop.description.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredAirdrops(filtered);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -52,49 +64,54 @@ const AirdropTable = () => {
   }
 
   return (
+    <div className='max-w-full'>
+      <div className='flex justify-between'>
+        {/* Search input */}
+        <div className='flex justify-start'>
+          <div className="relative pb-3">
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search for drops…"
+              className="py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <FaMagnifyingGlass className="text-gray-500" />
+            </div>
+          </div>
+        </div>
 
-    <div >
-      <div className='flex flex-col justify-evenly'>
-{/* search */}
+        {/* Button */}
+        <div className='pb-3 flex justify-end'>
+          <Button className='mt-4 flex justify-between'>
+            <Link href="/airdrops/new"> <CiCirclePlus />New Airdrop</Link>
+          </Button>
+        </div>
       </div>
-     <div  className='grid grid-cols-4 gap-4'>
 
-          {airdrops.map((airdrop) => (
-                <div>
- <Box maxWidth="350px" >
-                 <Card asChild>
-                   <a href="#">
-                     <Text as="div" size="2" weight="bold">
-                       {airdrop.title}
-                     </Text>
-                     
-                     <Text as="div" color="gray" size="2">
-                      {airdrop.description}
-                     </Text>
-                   </a>
-                 </Card>
-               </Box>
-                </div>
-          ))}
-      {/* 
-      
-      <tr key={airdrop.id} className="hover:bg-gray-100">
-              <td className="border border-gray-500 px-4 py-2">{airdrop.title}</td>
-              <td className="border border-gray-500 px-4 py-2">{airdrop.description}</td>
-              <td className="border border-gray-500 px-4 py-2">{airdrop.status}</td>
-              <td className="border border-gray-500 px-4 py-2">{new Date(airdrop.createdAt).toLocaleDateString()}</td>
-            </tr>*/}
+      {/* Display filtered airdrops */}
+      <div className='grid grid-cols-4 gap-4'>
+        {filteredAirdrops.map((airdrop) => (
+          <div key={airdrop.id}>
+            <Box maxWidth="350px">
+              <Card asChild>
+                <a href="#">
+                  <Text as="div" size="2" weight="bold">
+                    {airdrop.title}
+                  </Text>
+                  <Text as="div" color="gray" size="2">
+                    {airdrop.description}
+                  </Text>
+                  <Text className="px-2 py-2">{airdrop.status}</Text>
+                  <Text className="px-2 py-2">{new Date(airdrop.createdAt).toLocaleDateString()}</Text>
+                </a>
+              </Card>
+            </Box>
+          </div>
+        ))}
+      </div>
     </div>
- 
-    {/* <div className='pt-4'>
-    <Button className='mt-4'>
-         <Link href="/airdrops/new">New Airdrop</Link>
-     </Button>
-    </div> */}
-    </div>
-    
-
-
   );
 };
 
