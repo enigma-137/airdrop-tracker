@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Airdrop {
+  id          Int      @id @default(autoincrement()) //Set the unique ID
+  title       String   @db.VarChar(255) //increase limit
+  description String   @db.Text //for a longer field
+  status      Status   @default(OPEN)
+  createdAt   DateTime @default(now()) //when a record is created
+  updatedAt   DateTime @updatedAt
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
