@@ -5,18 +5,34 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+
+model User {
+  id       Int       @id @default(autoincrement())
+  clerkId  String    @unique
+  email    String    @unique
+  name     String?
+  password String?
+  airdrops Airdrop[]
 }
 
 model Airdrop {
   id          Int      @id @default(autoincrement()) //Set the unique ID
   title       String   @db.VarChar(255) //increase limit
+  chain       String   @db.VarChar(255) //increase limit
+  url         String   @db.VarChar(255) //increase limit
   description String   @db.Text //for a longer field
   status      Status   @default(OPEN)
   createdAt   DateTime @default(now()) //when a record is created
   updatedAt   DateTime @updatedAt
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 enum Status {

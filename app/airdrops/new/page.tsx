@@ -14,6 +14,8 @@ import Spinner from '@/app/components/Spinner';
 interface AirdropForm {
     title: string;
     description: string;
+    url: string;
+    chain: string;
 }
 
 const NewAirdropsPage = () => {
@@ -42,6 +44,7 @@ const NewAirdropsPage = () => {
     <form className='space-y-3' onSubmit={handleSubmit(async (data)=> {
 
         try {
+          // 
             await axios.post("/api/airdrops", data);
             router.push("/airdrops") 
             setSubmitting(true)
@@ -52,6 +55,12 @@ const NewAirdropsPage = () => {
         
     })}>
         <TextField.Root placeholder='Add Airdrop Name' {...register('title')}>
+        </TextField.Root>
+        {errors.title && <Text color='red' as='p'>{errors.title.message}</Text>}
+        <TextField.Root placeholder='Add Airdrop chain' {...register('chain')}>
+        </TextField.Root>
+        {errors.title && <Text color='red' as='p'>{errors.title.message}</Text>}
+        <TextField.Root placeholder='Add Project URL' {...register('url')}>
         </TextField.Root>
         {errors.title && <Text color='red' as='p'>{errors.title.message}</Text>}
         <Controller 

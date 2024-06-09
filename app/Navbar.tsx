@@ -1,4 +1,5 @@
 'use client'
+import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link'
 import { usePathname } from 'next/navigation';
 import { WiRaindrops } from "react-icons/wi";
@@ -6,7 +7,7 @@ import { WiRaindrops } from "react-icons/wi";
 const Navbar = () => {
     const links = [
         {label: "Dashboard",
-            path: "/"
+            path: "/dashboard"
         },
         {
             label: "My Airdrops",
@@ -25,6 +26,11 @@ const Navbar = () => {
                 <li key={link.path} className= {`${link.path === currentPath ? "text-zinc-500" : "text-zinc-900"} hover:text-zinc-500 transition-colors`}><Link href={link.path}>{link.label}</Link></li>
             ))}
         </ul>
+        
+       
+        <div>
+        <UserButton />
+        </div>
     </nav>
   )
 }
