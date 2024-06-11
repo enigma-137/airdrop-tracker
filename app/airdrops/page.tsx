@@ -57,6 +57,10 @@ const AirdropTable = () => {
     fetchAirdrops();
   }, []);
 
+
+  //Handle Search 
+
+
   const handleSearch = (text: string) => {
     setSearchText(text);
     const filtered = airdrops.filter(airdrop =>
@@ -67,9 +71,10 @@ const AirdropTable = () => {
   };
 
 
-  const [error, setError] = useState("")
-  // const [submitting, setSubmitting] = useState(false)
+  // Submit functionalities
 
+  const [error, setError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm<AirdropForm>({
     resolver: zodResolver(validationSchema)
   })
@@ -79,16 +84,13 @@ const AirdropTable = () => {
     try {
 
       console.log(data, "Success")
-
       const myData = await axios.post("/api/airdrops", data);
-
-
       console.log(myData)
       router.push("/airdrops")
-      // setSubmitting(true)
+      setSubmitting(true)
     } catch (error) {
       setError("An unexpected error has occured!")
-      // setSubmitting(false)
+      setSubmitting(false)
     }
 
   }
@@ -129,11 +131,9 @@ const AirdropTable = () => {
             <Button variant='solid'>Got New Drop? Add Now+</Button>
           </AlertDialog.Trigger>
           <AlertDialog.Content size="4">
-
             <div className='max-w-xl'>
               {error && <Callout.Root color="red" className='mb-5'>
                 <Callout.Icon>
-
                 </Callout.Icon>
                 <Callout.Text>
                   {error}
@@ -141,7 +141,7 @@ const AirdropTable = () => {
               </Callout.Root>
               }
 
-        
+        {/* Form */}
 
               <form className='space-y-3' onSubmit={handleSubmit(onSubmit)}>
                 <TextField.Root placeholder='Add Airdrop Name' size='3' className='' {...register('title')}>
@@ -178,8 +178,8 @@ const AirdropTable = () => {
 
 
                 <div className='flex gap-6'>
-                  {/* <Button className='flex' type='submit' disabled={submitting} >Add.. {submitting && <Spinner />}  </Button> */}
-                  <input type='submit' />
+                  <Button className='flex' type='submit' disabled={submitting} >Add.. {submitting && <Spinner />}  </Button>
+                 
 
                   <AlertDialog.Cancel>
                     <Button variant="soft" color="gray">
