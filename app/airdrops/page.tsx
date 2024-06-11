@@ -1,12 +1,8 @@
-
 "use client"
-import { AlertDialog, Box, Button, Card, Callout, Select, Text, TextField } from '@radix-ui/themes'
-import Link from 'next/link'
+import { AlertDialog, Box, Button, Card, Callout, Select, Text, TextField } from '@radix-ui/themes';
+import Link from 'next/link';
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { CiCirclePlus } from "react-icons/ci";
-
-import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -15,12 +11,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { validationSchema } from '@/app/validationSchema';
 import Spinner from '@/app/components/Spinner';
 
-
 interface AirdropForm {
   title: string;
   description: string;
   url: string;
   chain: string;
+  status: string; // Added status field
 }
 
 interface Airdrop {
@@ -38,8 +34,7 @@ const AirdropTable = () => {
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [filteredAirdrops, setFilteredAirdrops] = useState<Airdrop[]>([]);
-
-  // DISPLAY CURRENT DROPS
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAirdrops = async () => {
@@ -57,10 +52,6 @@ const AirdropTable = () => {
     fetchAirdrops();
   }, []);
 
-
-  //Handle Search 
-
-
   const handleSearch = (text: string) => {
     setSearchText(text);
     const filtered = airdrops.filter(airdrop =>
@@ -70,31 +61,26 @@ const AirdropTable = () => {
     setFilteredAirdrops(filtered);
   };
 
-
-  // Submit functionalities
-
-  const [error, setError] = useState("")
-  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<AirdropForm>({
     resolver: zodResolver(validationSchema)
-  })
+  });
 
- const onSubmit = async (data: any) => {
-
+  const onSubmit = async (data: AirdropForm) => {
+    setSubmitting(true);
+    setError(""); // Clear previous errors
     try {
-
-      console.log(data, "Success")
-      const myData = await axios.post("/api/airdrops", data);
-      console.log(myData)
-      router.push("/airdrops")
-      setSubmitting(true)
+      const response = await axios.post("/api/airdrops", data);
+      console.log(response.data, "Success");
+      router.push("/airdrops");
     } catch (error) {
-      setError("An unexpected error has occured!")
-      setSubmitting(false)
+      console.error(error);
+      setError("An unexpected error has occurred!");
+    } finally {
+      setSubmitting(true);
     }
-
-  }
-  const router = useRouter()
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -107,24 +93,18 @@ const AirdropTable = () => {
   return (
     <div className='max-w-full'>
       <div className='flex justify-between'>
-
-        {/* Search input */}
         <div className='flex justify-start'>
-
           <TextField.Root
             value={searchText}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search for drops…"
             className="py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:border-violet-500"
-
           >
             <TextField.Slot>
               <FaMagnifyingGlass height="16" width="16" />
             </TextField.Slot>
           </TextField.Root>
         </div>
-
-        {/* Button */}
 
         <AlertDialog.Root>
           <AlertDialog.Trigger>
@@ -133,37 +113,36 @@ const AirdropTable = () => {
           <AlertDialog.Content size="4">
             <div className='max-w-xl'>
               {error && <Callout.Root color="red" className='mb-5'>
-                <Callout.Icon>
-                </Callout.Icon>
-                <Callout.Text>
-                  {error}
-                </Callout.Text>
-              </Callout.Root>
-              }
-
-        {/* Form */}
+                <Callout.Icon />
+                <Callout.Text>{error}</Callout.Text>
+              </Callout.Root>}
 
               <form className='space-y-3' onSubmit={handleSubmit(onSubmit)}>
+
+                {/* name or title */}
                 <TextField.Root placeholder='Add Airdrop Name' size='3' className='' {...register('title')}>
                 </TextField.Root>
                 {errors.title && <Text size="1" color='red' as='p'>{errors.title.message}</Text>}
 
 
                 <div className='flex flex-col gap-3'>
-
+                       {/* Chain */}
                   <TextField.Root placeholder='Add Airdrop chain' size='3' {...register('chain')}>
                   </TextField.Root>
                   {errors.title && <Text size="1" color='red' as='p'>{errors.chain?.message}</Text>}
 
-                  {/* <TextField.Root placeholder='Add Project URL' size="3" {...register('url')}>
+                  {/* Url */}
+
+                  <TextField.Root placeholder='Add Project URL' size="3" {...register('url')}>
                   </TextField.Root>
                   {errors.title && <Text color='red' size="1" as='p'>{errors.description?.message}</Text>}
- */}
+
 
                 </div>
 
-
-                <Select.Root size="3" defaultValue="open">
+                
+                 <div className='m-1 flex flex-col'> Status</div>
+                 <Select.Root size="3" defaultValue="open" {...register("status")}>
                   <Select.Trigger />
                   <Select.Content>
                     <Select.Item value="open">Open</Select.Item>
@@ -171,6 +150,8 @@ const AirdropTable = () => {
                     <Select.Item value="close">End</Select.Item>
                   </Select.Content>
                 </Select.Root>
+                 
+               
 
                 <TextField.Root placeholder='Add Project description' size='3' {...register('description')}>
                 </TextField.Root>
@@ -179,7 +160,7 @@ const AirdropTable = () => {
 
                 <div className='flex gap-6'>
                   <Button className='flex' type='submit' disabled={submitting} >Add.. {submitting && <Spinner />}  </Button>
-                 
+
 
                   <AlertDialog.Cancel>
                     <Button variant="soft" color="gray">
@@ -190,6 +171,7 @@ const AirdropTable = () => {
 
 
               </form>
+
             </div>
 
 
